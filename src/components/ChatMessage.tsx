@@ -1,7 +1,7 @@
 
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ChatMessage as ChatMessageType } from '@/hooks/useChat';
+import { ChatMessage as ChatMessageType, } from '@/hooks/useChat';
 import { User } from 'firebase/auth';
 import { UserInfo } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
@@ -9,11 +9,13 @@ import { useState, useRef, useEffect } from 'react';
 interface ChatMessageProps {
   message: ChatMessageType;
   currentUser: UserInfo;
+  translateMessage: (message: string,id:string,lang:string) => Promise<string>;
 }
 
-const ChatMessage = ({ message, currentUser }: ChatMessageProps) => {
+const ChatMessage = ({ message, currentUser,translateMessage }: ChatMessageProps) => {
   const isUser = message.sender === 'user';
   const timestamp = message.timestamp ? new Date(message.timestamp) : null;
+  // const { translateMessage } = useChat(currentUser);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [translated, setTranslated] = useState(message.content);
@@ -38,40 +40,43 @@ const ChatMessage = ({ message, currentUser }: ChatMessageProps) => {
 
   const handleTranslate = async () => {
     setTranslated('Translating...');
-    const rapidApiKey = import.meta.env.VITE_RAPIDAPI_KEY;
+    const data = await translateMessage(message.content,message.id,selectedLang);
+    console.log("data",data)
+    setTranslated(data)
+    // const rapidApiKey = import.meta.env.VITE_RAPIDAPI_KEY;
   
-    if (!rapidApiKey) {
-      setTranslated('Translation failed: API key not set.');
-      return;
-    }
+    // if (!rapidApiKey) {
+    //   setTranslated('Translation failed: API key not set.');
+    //   return;
+    // }
   
-    try {
-      const url = `https://unlimited-google-translate1.p.rapidapi.com/api/translate?target=${selectedLang}&text=${encodeURIComponent(message.content)}&source=en`;
-      const options = {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': rapidApiKey,
-          'x-rapidapi-host': 'unlimited-google-translate1.p.rapidapi.com',
-        },
-      };
+    // try {
+    //   const url = `https://unlimited-google-translate1.p.rapidapi.com/api/translate?target=${selectedLang}&text=${encodeURIComponent(message.content)}&source=en`;
+    //   const options = {
+    //     method: 'GET',
+    //     headers: {
+    //       'x-rapidapi-key': rapidApiKey,
+    //       'x-rapidapi-host': 'unlimited-google-translate1.p.rapidapi.com',
+    //     },
+    //   };
   
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+    //   const response = await fetch(url, options);
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! Status: ${response.status}`);
+    //   }
   
-      const data = await response.json();
-      console.log('Translation API response:', data);
+    //   const data = await response.json();
+    //   console.log('Translation API response:', data);
   
-      if (data.translated_text) {
-        setTranslated(data.translated_text);
-      } else {
-        setTranslated('Translation failed: No translated text returned.');
-      }
-    } catch (error) {
-      console.error('Translation error:', error);
-      setTranslated('Translation failed.');
-    }
+    //   if (data.translated_text) {
+    //     setTranslated(data.translated_text);
+    //   } else {
+    //     setTranslated('Translation failed: No translated text returned.');
+    //   }
+    // } catch (error) {
+    //   console.error('Translation error:', error);
+    //   setTranslated('Translation failed.');
+    // }
   };
   
   

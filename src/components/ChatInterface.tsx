@@ -13,7 +13,7 @@ interface ChatInterfaceProps {
 }
 
 const ChatInterface = ({ user, onSignOut }: ChatInterfaceProps) => {
-  const { messages, sendMessage, loading, pendingAIMessage, relatedQuestions } = useChat(user);
+  const { messages, sendMessage, loading, pendingAIMessage, relatedQuestions,translateMessage } = useChat(user);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to latest message
@@ -47,6 +47,7 @@ const ChatInterface = ({ user, onSignOut }: ChatInterfaceProps) => {
                   key={message.id} 
                   message={message} 
                   currentUser={user}
+                  translateMessage={translateMessage}
                 />
               ))}
               {pendingAIMessage && (
