@@ -11,8 +11,8 @@ export interface ChatMessage {
   timestamp?: string;
 }
 
-// const API_URL = 'https://askhr.mangopond-93ace1db.southcentralus.azurecontainerapps.io';
-const API_URL ='http://localhost:8000'; // Backend URL
+const API_URL = 'https://askhr.mangopond-93ace1db.southcentralus.azurecontainerapps.io';
+// const API_URL ='http://localhost:8000'; // Backend URL
 
 export const useChat = (user: UserInfo | null) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
