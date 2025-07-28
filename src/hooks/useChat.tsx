@@ -61,7 +61,7 @@ export const useChat = (user: UserInfo | null) => {
       }
       const data = await response.json();
       // Store related questions
-      setRelatedQuestions(Array.isArray(data.related_questions) ? data.related_questions : []);
+      setRelatedQuestions(Array.isArray(data.related_questions) ? data.related_questions.slice(0, 3) : []);
       let answer = data.answer || data.reply || data.message || JSON.stringify(data);
       answer = answer.replace(/\\n\\n/g, '\n\n');
       let citations = '';
